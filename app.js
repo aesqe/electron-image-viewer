@@ -1,6 +1,7 @@
-const { remote } = require("electron");
-const Ractive = require("ractive");
+const { remote, ipcRenderer } = require("electron");
 const path = require("path");
+const Ractive = require("ractive");
+const ractiveEventsTap = require("ractive-events-tap");
 const sander = require("sander");
 
 const displayableExtensions = [
@@ -10,8 +11,6 @@ const displayableExtensions = [
 const argsOffset = process.env.PRODUCTION ? 1 : 2;
 const inputArgs = remote.process.argv.slice(argsOffset);
 let inputPath = inputArgs[0];
-
-
 
 function parseInput( inputPath, cwd = remote.process.cwd() )
 {
@@ -27,14 +26,22 @@ function parseInput( inputPath, cwd = remote.process.cwd() )
 			files.push(inputPath);
 		} else {
 			files = sander.readdirSync(inputPath)
+				.filter(isDisplayableImage)
 				.map(function(fileName){
 					return path.join(inputPath, fileName);
-				})
-				.filter(isDisplayableImage);
+				});
 		}
 	}
 
-	return files;
+	return files.map(slash).map(encodeChars);
+}
+
+function slash (str) {
+	return str.replace(/\\/g, "/");
+}
+
+function encodeChars( str ) {
+	return str.replace(/\s/g, "%20");
 }
 
 function isDisplayableImage ( inputPath )
@@ -46,22 +53,95 @@ function isDisplayableImage ( inputPath )
 const templateString = sander.readFileSync("template.html", {encoding: "utf-8"});
 
 const app = new Ractive({
-  el: "#viewer",
-  template: templateString,
+	el: "#viewer",
+	template: templateString,
 
-  data: function() {
-  	return {
-  		currentIndex: 0,
-  		images: []
-  	};
-  },
+	events: {
+		tap: ractiveEventsTap,
+	},
 
-  onconfig: function()
-  {
-  	this.on("input", function(data){
-  		this.set("images", parseInput(data));
-  	});
-  }
+	data: function() {
+		return {
+			currentIndex: 0,
+			images: []
+		};
+	},
+
+	computed: {
+		currentImage: function()
+		{
+			const images = this.get("images");
+			const currentIndex = this.get("currentIndex");
+			return images[currentIndex] || "";
+		},
+		previousButtonHidden: function(){
+			return ! this.hasPreviousImage();
+		},
+		nextButtonHidden: function(){
+			return ! this.hasNextImage();
+		}
+	},
+
+	onconfig: function()
+	{
+		this.on({
+			input: function (data) {
+				this.set("images", parseInput(data));
+			},
+
+			previousImage: function () {
+				if( this.hasPreviousImage() ) {
+					this.subtract("currentIndex");
+				}
+			},
+
+			nextImage: function () {
+				if( this.hasNextImage() ) {
+					this.add("currentIndex");
+				}
+			},
+
+			escape: function(){
+				if( this.get("maximized") ) {
+					ipcRenderer.send("unmaximize");
+				} else {
+					ipcRenderer.send("quit");
+				}
+			}
+		});
+
+		document.addEventListener("keydown", function(e){
+			if (e.keyCode === 37) {
+				app.fire("previousImage");
+			} else if (e.keyCode === 39) {
+				app.fire("nextImage");
+			} else if (e.keyCode === 27) {
+				app.fire("escape");
+			}
+		});
+
+		
+		this.fire("input", inputPath);
+	},
+
+	hasNextImage: function () {
+		const i = this.get("currentIndex");
+		const len = this.get("images").length - 1;
+		return i < len;
+	},
+
+	hasPreviousImage: function() {
+		const i = this.get("currentIndex");
+		return i > 0;
+	}
 });
 
-app.fire("input", inputPath);
+$body = document.querySelector("body");
+
+ipcRenderer.on("maximize", function(){
+	app.set("maximized", true);
+});
+
+ipcRenderer.on("unmaximize", function(){
+	app.set("maximized", false);
+});

@@ -1,32 +1,21 @@
-<div class="window">
+<div class="window {{maximized ? 'maximized' : ''}}">
 
-	<header class="toolbar toolbar-header">
-		<h1 class="title">Header</h1>
-
-		<div class="toolbar-actions" id="controls">
+	<header class="toolbar toolbar-header text-center">
+		<div class="toolbar-actions">
 		    <div class="btn-group">
-		    	<button class="btn btn-default" on-click="@this.subtract('currentIndex')">
-		    		<span class="icon icon-left"></span>
-		    	</button>			
-				<span class="btn">{{currentIndex+1}} of {{images.length}}</span>
-				<button class="btn btn-default" on-click="@this.add('currentIndex')">
+				<button class="btn btn-default {{previousButtonHidden}}" on-tap="previousImage">
+					<span class="icon icon-left"></span>
+				</button>
+				<span id="currentOfDisplay" class="btn">{{currentIndex+1}} of {{images.length}}</span>
+				<button class="btn btn-default {{nextButtonHidden}}" on-tap="nextImage">
 					<span class="icon icon-right"></span>
 				</button>
+			</div>
 		</div>
 	</header>
 
-	
-
 	<div class="window-content">
-		<div id="display">
-		{{#if images.length}}
-			<img src="{{images[currentIndex]}}" />
-		{{/if}}
-		</div>
+		<div id="display" style="background-image: url({{currentImage}});"></div>
 	</div>
-
-	<footer class="toolbar toolbar-footer">
-	  <h1 class="title">Footer</h1>
-	</footer>
 
 </div>

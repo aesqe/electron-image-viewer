@@ -1,4 +1,5 @@
 const { app, BrowserWindow } = require("electron");
+const { ipcMain } = require("electron")
 
 let mainWindow = null;
 
@@ -12,11 +13,11 @@ app.on("ready", function() {
   mainWindow = new BrowserWindow({
     width: 800,
     height: 600,
-    'min-width': 500,
-    'min-height': 200,
-    'accept-first-mouse': true,
-    'title-bar-style': 'hidden'
+    frame: false,
+    resizeable: true
   });
+
+  mainWindow.setMenu(null);
 
   mainWindow.loadURL("file://" + __dirname + "/index.html");
 
@@ -24,7 +25,24 @@ app.on("ready", function() {
     mainWindow = null;
   });
 
+  mainWindow.on("maximize", function(){
+    mainWindow.webContents.send("maximize");
+  });
+
+  mainWindow.on("unmaximize", function(){
+    mainWindow.webContents.send("unmaximize");
+  });
+
+  ipcMain.on("quit", function(){
+    app.quit();
+  });
+
+  ipcMain.on("unmaximize", function(){
+    mainWindow.unmaximize();
+  });
+
   if (process.env.NODE_ENV !== "production") {
     mainWindow.openDevTools();
   }
 });
+
