@@ -2,13 +2,17 @@ html, body {
 	margin: 0;
 }
 
+#controls {
+	height: 32px;
+	background: #EEE;
+}
+
 #display {
 	width: 100vw;
-	height: 100vh;
 }
 
 img {
 	display: block;
-	height: 100%;
-	width: auto;
+	max-width: 100%;
+	/*max-height: 100%;*/
 }
