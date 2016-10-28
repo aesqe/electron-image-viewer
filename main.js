@@ -14,7 +14,8 @@ app.on("ready", function() {
     width: 800,
     height: 600,
     frame: false,
-    resizeable: true
+    resizeable: true,
+    overlayScrollbars: true
   });
 
   mainWindow.setMenu(null);
@@ -35,6 +36,10 @@ app.on("ready", function() {
 
   ipcMain.on("quit", function(){
     app.quit();
+  });
+
+  ipcMain.on("maximize", function(){
+    mainWindow.maximize();
   });
 
   ipcMain.on("unmaximize", function(){

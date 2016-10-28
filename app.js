@@ -3,6 +3,8 @@ const path = require("path");
 const Ractive = require("ractive");
 const ractiveEventsTap = require("ractive-events-tap");
 const sander = require("sander");
+const Mousetrap = require("mousetrap");
+const Hamster = require("hamsterjs");
 
 const displayableExtensions = [
 	"jpg", "jpeg", "png", "gif", "webp", "bmp", "svg"
@@ -15,6 +17,9 @@ let inputPath = inputArgs[0];
 function parseInput( inputPath, cwd = remote.process.cwd() )
 {
 	let files = [];
+	let index = 1;
+	let inputFile = "";
+	let dirname = inputPath;
 
 	if( ! path.isAbsolute(inputPath) ) {
 		inputPath = path.resolve(cwd, inputPath);
@@ -22,18 +27,27 @@ function parseInput( inputPath, cwd = remote.process.cwd() )
 
 	if( sander.existsSync(inputPath) )
 	{
-		if( isDisplayableImage(inputPath) ) {
-			files.push(inputPath);
-		} else {
-			files = sander.readdirSync(inputPath)
-				.filter(isDisplayableImage)
-				.map(function(fileName){
-					return path.join(inputPath, fileName);
-				});
+		if( isDisplayableImage(inputPath) )
+		{
+			inputFile = path.basename(inputPath);
+			inputDir = path.dirname(inputPath);
+		}
+
+		files = sander.readdirSync(inputDir)
+			.filter(isDisplayableImage)
+			.map(function(fileName){
+				return path.join(inputDir, fileName);
+			});
+
+		if( inputFile ) {
+			index = files.indexOf(path.join(inputDir, inputFile));
 		}
 	}
 
-	return files.map(slash).map(encodeChars);
+	return {
+		files: files.map(slash).map(encodeChars),
+		index: index
+	};
 }
 
 function slash (str) {
@@ -86,7 +100,9 @@ const app = new Ractive({
 	{
 		this.on({
 			input: function (data) {
-				this.set("images", parseInput(data));
+				const { files, index } = parseInput(data);
+				this.set("images", files);
+				this.set("currentIndex", index);
 			},
 
 			previousImage: function () {
@@ -110,23 +126,36 @@ const app = new Ractive({
 			}
 		});
 
-		document.addEventListener("keydown", function(e){
-			if (e.keyCode === 37) {
-				app.fire("previousImage");
-			} else if (e.keyCode === 39) {
-				app.fire("nextImage");
-			} else if (e.keyCode === 27) {
-				app.fire("escape");
-			}
-		});
+		Mousetrap.bind(["f", "f"], () => this.toggleFullscreen());
+		Mousetrap.bind(["escape"], () => this.fire("escape"));
+		Mousetrap.bind(["left"], () => this.fire("previousImage"));
+		Mousetrap.bind(["right"], () => this.fire("nextImage"));
 
+		Hamster(document).wheel((...args) => this.handleMouseWheel(...args));
 		
 		this.fire("input", inputPath);
 	},
 
+	handleMouseWheel: function(e, d, dx, dy){
+		if( dy === 1 ) {
+			this.fire("nextImage");
+		} else {
+			this.fire("previousImage");
+		}
+	},
+
+	toggleFullscreen: function () {
+		if( this.get("maximized") ) {
+			ipcRenderer.send("unmaximize");
+		} else {
+			ipcRenderer.send("maximize");
+		}
+	},
+
 	hasNextImage: function () {
 		const i = this.get("currentIndex");
-		const len = this.get("images").length - 1;
+		const images = this.get("images");
+		const len = images.length - 1;
 		return i < len;
 	},
 
