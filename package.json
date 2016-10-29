@@ -1,7 +1,7 @@
 {
   "name": "electron-image-viewer",
   "productName": "electron-image-viewer",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "Image viewer",
   "main": "main.js",
   "author": "aesqe",

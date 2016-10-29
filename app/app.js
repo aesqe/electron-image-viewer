@@ -13,56 +13,7 @@ const displayableExtensions = [
 
 const cwd = remote.process.cwd();
 const inputArgs = remote.process.argv;
-let inputPath = inputArgs.pop();
-
-function parseInput( inputPath = "", dir = cwd )
-{
-  if( ! path.isAbsolute(inputPath) ) {
-    inputPath = path.resolve(dir, inputPath);
-  }
-
-  let files = [];
-  let index = 0;
-  let inputFile = "";
-  let inputDir = inputPath;
-
-  if( sander.existsSync(inputPath) )
-  {
-    if( isDisplayableImage(inputPath) )
-    {
-      inputFile = path.basename(inputPath);
-      inputDir = path.dirname(inputPath);
-    }
-
-    files = sander.readdirSync(inputDir)
-      .filter(isDisplayableImage)
-      .map(fileName => path.join(inputDir, fileName));
-
-    if( inputFile ) {
-      index = files.indexOf(path.join(inputDir, inputFile));
-    }
-  }
-
-  return {
-    files: files.map(slash).map(encodeChars),
-    index: index
-  };
-}
-
-function slash (str) {
-  return str.replace(/\\/g, "/");
-}
-
-function encodeChars( str ) {
-  return str.replace(/\s/g, "%20");
-}
-
-function isDisplayableImage ( inputPath )
-{
-  const ext = path.extname(inputPath).slice(1);
-  return ext && displayableExtensions.indexOf(ext) > -1;
-}
-
+  let inputPath = inputArgs.pop();
 const templateString = sander.readFileSync(
   path.join(__dirname, "template.html"),
   { encoding: "utf-8" }
@@ -79,16 +30,16 @@ const app = new Ractive({
   data: function() {
     return {
       currentIndex: 0,
-      images: []
+      files: []
     };
   },
 
   computed: {
     currentImage: function()
     {
-      const images = this.get("images");
+      const files = this.get("files");
       const currentIndex = this.get("currentIndex");
-      return images[currentIndex] || "";
+      return files[currentIndex] || "";
     },
     previousButtonHidden: function(){
       return ! this.hasPreviousImage() ? "hidden" : "";
@@ -102,8 +53,8 @@ const app = new Ractive({
   {
     this.on({
       input: function (data) {
-        const { files, index } = parseInput(data);
-        this.set("images", files);
+        const { files, index } = this.parseInput(data);
+        this.set("files", files);
         this.set("currentIndex", index);
       },
 
@@ -140,6 +91,61 @@ const app = new Ractive({
     this.fire("input", inputPath);
   },
 
+  parseInput: function( inputPath = "", dir = cwd )
+  {
+    if( ! path.isAbsolute(inputPath) ) {
+      inputPath = path.resolve(dir, inputPath);
+    }
+
+    let files = [];
+    let index = 0;
+    let inputFile = "";
+    let inputDir = inputPath;
+
+    if( sander.existsSync(inputPath) )
+    {
+      if( this.isDisplayableImage(inputPath) )
+      {
+        inputFile = path.basename(inputPath);
+        inputDir = path.dirname(inputPath);
+      }
+      
+      if( this.isDirectory(inputDir) )
+      {
+        files = sander.readdirSync(inputDir)
+          .filter(this.isDisplayableImage)
+          .map(fileName => path.join(inputDir, fileName));
+      }
+
+      if( files.length && inputFile ) {
+        index = files.indexOf(path.join(inputDir, inputFile));
+      }
+    }
+
+    return {
+      files: files.map(this.slash).map(this.encodeChars),
+      index: index
+    };
+  },
+
+  isDisplayableImage: function ( inputPath ) {
+    const ext = path.extname(inputPath).slice(1);
+    return ext && displayableExtensions.indexOf(ext) > -1;
+  },
+
+  isDirectory: function ( inputPath ) {
+    const stats = sander.lstatSync(inputPath);
+    return stats.isDirectory();
+  },
+
+  slash: function (str) {
+    return str.replace(/\\/g, "/");
+  },
+
+  encodeChars: function( str ) {
+    return str.replace(/\s/g, "%20");
+  },
+
   handleMouseWheel: function(e, d, dx, dy){
     if( dy === 1 ) {
       this.fire("nextImage");
@@ -158,8 +164,8 @@ const app = new Ractive({
 
   hasNextImage: function () {
     const i = this.get("currentIndex");
-    const images = this.get("images");
-    const len = images.length - 1;
+    const files = this.get("files");
+    const len = files.length - 1;
     return i < len;
   },
 
@@ -186,18 +192,18 @@ document.ondragover = document.ondrop = (e) => {
 }
 
 document.ondragover = (e) => {
-  app.set("dragover", true);
   e.preventDefault();
+  app.set("dragover", true);
 }
 
 document.ondragleave = document.ondragexit = document.ondragend = (e) => {
-  app.set("dragover", false);
   e.preventDefault();
+  app.set("dragover", false);
 }
 
 document.body.ondrop = (e) => {
-  app.set("dragover", false);
+  e.preventDefault();
   const inputPath = e.dataTransfer.files[0].path;
   app.fire("input", inputPath);
-  e.preventDefault();
+  app.set("dragover", false);
 }

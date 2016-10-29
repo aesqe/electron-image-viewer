@@ -1,13 +1,13 @@
 <div class="window {{maximized ? 'maximized' : ''}} {{dragover ? 'dragover' : ''}}">
 
-  {{#if images.length}}
+  {{#if files.length}}
   <header class="toolbar toolbar-header text-center">
     <div class="toolbar-actions">
       <div class="btn-group">
         <button class="btn btn-default" on-tap="previousImage" disabled="{{previousButtonHidden}}">
           <span class="icon icon-left-dir"></span>
         </button>
-        <span id="current-of-display" class="btn">{{currentIndex+1}} of {{images.length}}</span>
+        <span id="current-of-display" class="btn">{{currentIndex+1}} of {{files.length}}</span>
         <button class="btn btn-default" on-tap="nextImage" disabled="{{nextButtonHidden}}">
           <span class="icon icon-right-dir"></span>
         </button>
@@ -17,7 +17,7 @@
   {{/if}}
 
   <div class="window-content">
-    {{#if images.length}}
+    {{#if files.length}}
       <div id="display" style="background-image: url({{currentImage}});"></div>
     {{else}}
       <div id="drag-drop">
