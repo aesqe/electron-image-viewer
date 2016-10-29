@@ -1,37 +1,42 @@
 html, body {
-	margin: 0;
+  margin: 0;
+}
+
+[disabled] {
+  opacity: 0.75;
+  pointer-events: none;
 }
 
 .maximized {
-	background-color: #000;
+  background-color: #000;
 }
 
 #display {
-	width: 100vw;
-	height: calc(100vh - 35px);
-	margin-top: 35px;
-	background-repeat: no-repeat;
-	background-size: contain;
-	background-position: center;
+  width: 100vw;
+  height: calc(100vh - 35px);
+  margin-top: 35px;
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-position: center;
 }
 
 .maximized #display {
-	height: 100vh;
-	margin-top: 0;
+  height: 100vh;
+  margin-top: 0;
 }
 
 header {
-	position: fixed;
-	z-index: 2;
-	width: 100%;
-	top: 0;
+  position: fixed;
+  z-index: 2;
+  width: 100%;
+  top: 0;
 }
 
 .maximized header {
-	display: none;
+  display: none;
 }
 
 #currentOfDisplay {
-	min-width: 100px;
-    box-shadow: none;
+  min-width: 100px;
+  box-shadow: none;
 }

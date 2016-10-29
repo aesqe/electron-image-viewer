@@ -1,11 +1,14 @@
 {
   "name": "electron-image-viewer",
   "productName": "electron-image-viewer",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "Image viewer",
   "main": "main.js",
   "author": "aesqe",
   "license": "ISC",
+  "scripts": {
+    "buildwin64": "node buildwin64.js"
+  },
   "dependencies": {
     "hamsterjs": "1.1.2",
     "mousetrap": "1.6.0",
@@ -14,6 +17,7 @@
     "sander": "0.5.1"
   },
   "devDependencies": {
-    "electron-prebuilt": "latest"
+    "electron": "latest",
+    "electron-packager": "latest"
   }
 }

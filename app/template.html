@@ -1,21 +1,21 @@
 <div class="window {{maximized ? 'maximized' : ''}}">
 
-	<header class="toolbar toolbar-header text-center">
-		<div class="toolbar-actions">
-		    <div class="btn-group">
-				<button class="btn btn-default {{previousButtonHidden}}" on-tap="previousImage">
-					<span class="icon icon-left-dir"></span>
-				</button>
-				<span id="currentOfDisplay" class="btn">{{currentIndex+1}} of {{images.length}}</span>
-				<button class="btn btn-default {{nextButtonHidden}}" on-tap="nextImage">
-					<span class="icon icon-right-dir"></span>
-				</button>
-			</div>
-		</div>
-	</header>
+  <header class="toolbar toolbar-header text-center">
+    <div class="toolbar-actions">
+      <div class="btn-group">
+        <button class="btn btn-default" on-tap="previousImage" disabled="{{previousButtonHidden}}">
+          <span class="icon icon-left-dir"></span>
+        </button>
+        <span id="currentOfDisplay" class="btn">{{currentIndex+1}} of {{images.length}}</span>
+        <button class="btn btn-default" on-tap="nextImage" disabled="{{nextButtonHidden}}">
+          <span class="icon icon-right-dir"></span>
+        </button>
+      </div>
+    </div>
+  </header>
 
-	<div class="window-content">
-		<div id="display" style="background-image: url({{currentImage}});"></div>
-	</div>
+  <div class="window-content">
+    <div id="display" style="background-image: url({{currentImage}});"></div>
+  </div>
 
 </div>

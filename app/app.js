@@ -7,8 +7,8 @@ const Mousetrap = require("mousetrap");
 const Hamster = require("hamsterjs");
 
 const displayableExtensions = [
-	"jpg", "jpeg", "png", "gif",
-	"webp", "bmp", "svg"
+  "jpg", "jpeg", "png", "gif",
+  "webp", "bmp", "svg"
 ];
 
 const cwd = remote.process.cwd();
@@ -17,162 +17,162 @@ let inputPath = inputArgs.pop();
 
 function parseInput( inputPath = "", dir = cwd )
 {
-	if( ! path.isAbsolute(inputPath) ) {
-		inputPath = path.resolve(dir, inputPath);
-	}
+  if( ! path.isAbsolute(inputPath) ) {
+    inputPath = path.resolve(dir, inputPath);
+  }
 
-	let files = [];
-	let index = 0;
-	let inputFile = "";
-	let inputDir = inputPath;
+  let files = [];
+  let index = 0;
+  let inputFile = "";
+  let inputDir = inputPath;
 
-	if( sander.existsSync(inputPath) )
-	{
-		if( isDisplayableImage(inputPath) )
-		{
-			inputFile = path.basename(inputPath);
-			inputDir = path.dirname(inputPath);
-		}
+  if( sander.existsSync(inputPath) )
+  {
+    if( isDisplayableImage(inputPath) )
+    {
+      inputFile = path.basename(inputPath);
+      inputDir = path.dirname(inputPath);
+    }
 
-		files = sander.readdirSync(inputDir)
-			.filter(isDisplayableImage)
-			.map(fileName => path.join(inputDir, fileName));
+    files = sander.readdirSync(inputDir)
+      .filter(isDisplayableImage)
+      .map(fileName => path.join(inputDir, fileName));
 
-		if( inputFile ) {
-			index = files.indexOf(path.join(inputDir, inputFile));
-		}
-	}
+    if( inputFile ) {
+      index = files.indexOf(path.join(inputDir, inputFile));
+    }
+  }
 
-	return {
-		files: files.map(slash).map(encodeChars),
-		index: index
-	};
+  return {
+    files: files.map(slash).map(encodeChars),
+    index: index
+  };
 }
 
 function slash (str) {
-	return str.replace(/\\/g, "/");
+  return str.replace(/\\/g, "/");
 }
 
 function encodeChars( str ) {
-	return str.replace(/\s/g, "%20");
+  return str.replace(/\s/g, "%20");
 }
 
 function isDisplayableImage ( inputPath )
 {
-	const ext = path.extname(inputPath).slice(1);
-	return ext && displayableExtensions.indexOf(ext) > -1;
+  const ext = path.extname(inputPath).slice(1);
+  return ext && displayableExtensions.indexOf(ext) > -1;
 }
 
 const templateString = sander.readFileSync(
-	path.join(__dirname, "template.html"),
-	{ encoding: "utf-8" }
+  path.join(__dirname, "template.html"),
+  { encoding: "utf-8" }
 );
 
 const app = new Ractive({
-	el: "#viewer",
-	template: templateString,
+  el: "#viewer",
+  template: templateString,
 
-	events: {
-		tap: ractiveEventsTap
-	},
+  events: {
+    tap: ractiveEventsTap
+  },
 
-	data: function() {
-		return {
-			currentIndex: 0,
-			images: []
-		};
-	},
+  data: function() {
+    return {
+      currentIndex: 0,
+      images: []
+    };
+  },
 
-	computed: {
-		currentImage: function()
-		{
-			const images = this.get("images");
-			const currentIndex = this.get("currentIndex");
-			return images[currentIndex] || "";
-		},
-		previousButtonHidden: function(){
-			return ! this.hasPreviousImage();
-		},
-		nextButtonHidden: function(){
-			return ! this.hasNextImage();
-		}
-	},
+  computed: {
+    currentImage: function()
+    {
+      const images = this.get("images");
+      const currentIndex = this.get("currentIndex");
+      return images[currentIndex] || "";
+    },
+    previousButtonHidden: function(){
+      return ! this.hasPreviousImage() ? "hidden" : "";
+    },
+    nextButtonHidden: function(){
+      return ! this.hasNextImage() ? "hidden" : "";
+    }
+  },
 
-	onconfig: function()
-	{
-		this.on({
-			input: function (data) {
-				const { files, index } = parseInput(data);
-				this.set("images", files);
-				this.set("currentIndex", index);
-			},
+  onconfig: function()
+  {
+    this.on({
+      input: function (data) {
+        const { files, index } = parseInput(data);
+        this.set("images", files);
+        this.set("currentIndex", index);
+      },
 
-			previousImage: function () {
-				if( this.hasPreviousImage() ) {
-					this.subtract("currentIndex");
-				}
-			},
+      previousImage: function () {
+        if( this.hasPreviousImage() ) {
+          this.subtract("currentIndex");
+        }
+      },
 
-			nextImage: function () {
-				if( this.hasNextImage() ) {
-					this.add("currentIndex");
-				}
-			},
+      nextImage: function () {
+        if( this.hasNextImage() ) {
+          this.add("currentIndex");
+        }
+      },
 
-			escape: function(){
-				if( this.get("maximized") ) {
-					ipcRenderer.send("unmaximize");
-				} else {
-					ipcRenderer.send("quit");
-				}
-			}
-		});
+      escape: function(){
+        if( this.get("maximized") ) {
+          ipcRenderer.send("unmaximize");
+        } else {
+          ipcRenderer.send("quit");
+        }
+      }
+    });
 
-		Mousetrap.bind(["left"], () => this.fire("previousImage"));
-		Mousetrap.bind(["right"], () => this.fire("nextImage"));
-		Mousetrap.bind(["escape"], () => this.fire("escape"));
-		Mousetrap.bind(["f"], () => this.toggleFullscreen());
+    Mousetrap.bind(["left"], () => this.fire("previousImage"));
+    Mousetrap.bind(["right"], () => this.fire("nextImage"));
+    Mousetrap.bind(["escape"], () => this.fire("escape"));
+    Mousetrap.bind(["f"], () => this.toggleFullscreen());
 
-		Hamster(document).wheel(
-			(...args) => this.handleMouseWheel(...args)
-		);
-		
-		this.fire("input", inputPath);
-	},
+    Hamster(document).wheel(
+      (...args) => this.handleMouseWheel(...args)
+    );
+    
+    this.fire("input", inputPath);
+  },
 
-	handleMouseWheel: function(e, d, dx, dy){
-		if( dy === 1 ) {
-			this.fire("nextImage");
-		} else {
-			this.fire("previousImage");
-		}
-	},
+  handleMouseWheel: function(e, d, dx, dy){
+    if( dy === 1 ) {
+      this.fire("nextImage");
+    } else {
+      this.fire("previousImage");
+    }
+  },
 
-	toggleFullscreen: function () {
-		if( this.get("maximized") ) {
-			ipcRenderer.send("unmaximize");
-		} else {
-			ipcRenderer.send("maximize");
-		}
-	},
+  toggleFullscreen: function () {
+    if( this.get("maximized") ) {
+      ipcRenderer.send("unmaximize");
+    } else {
+      ipcRenderer.send("maximize");
+    }
+  },
 
-	hasNextImage: function () {
-		const i = this.get("currentIndex");
-		const images = this.get("images");
-		const len = images.length - 1;
-		return i < len;
-	},
+  hasNextImage: function () {
+    const i = this.get("currentIndex");
+    const images = this.get("images");
+    const len = images.length - 1;
+    return i < len;
+  },
 
-	hasPreviousImage: function() {
-		const i = this.get("currentIndex");
-		return i > 0;
-	}
+  hasPreviousImage: function() {
+    const i = this.get("currentIndex");
+    return i > 0;
+  }
 });
 
 ipcRenderer.on("maximize", function(){
-	app.set("maximized", true);
+  app.set("maximized", true);
 });
 
 ipcRenderer.on("unmaximize", function(){
-	app.set("maximized", false);
+  app.set("maximized", false);
 });
