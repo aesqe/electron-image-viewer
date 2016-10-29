@@ -1,7 +1,10 @@
 const { app, BrowserWindow } = require("electron");
-const { ipcMain } = require("electron")
+const { ipcMain } = require("electron");
+const path = require("path");
+const sander = require("sander");
 
-let mainWindow = null;
+  let mainWindow = null;
+const IS_DEV = sander.existsSync(__dirname, ".DEV");
 
 app.on("window-all-closed", function() {
   if (process.platform != "darwin")
@@ -20,7 +23,7 @@ app.on("ready", function() {
 
   mainWindow.setMenu(null);
 
-  mainWindow.loadURL("file://" + __dirname + "/index.html");
+  mainWindow.loadURL("file://" + __dirname + "/app/index.html");
 
   mainWindow.on("closed", function() {
     mainWindow = null;
@@ -46,7 +49,7 @@ app.on("ready", function() {
     mainWindow.unmaximize();
   });
 
-  if (process.env.NODE_ENV !== "production") {
+  if( IS_DEV ) {
     mainWindow.openDevTools();
   }
 });

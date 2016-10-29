@@ -7,23 +7,24 @@ const Mousetrap = require("mousetrap");
 const Hamster = require("hamsterjs");
 
 const displayableExtensions = [
-	"jpg", "jpeg", "png", "gif", "webp", "bmp", "svg"
+	"jpg", "jpeg", "png", "gif",
+	"webp", "bmp", "svg"
 ];
 
-const argsOffset = process.env.PRODUCTION ? 1 : 2;
-const inputArgs = remote.process.argv.slice(argsOffset);
-let inputPath = inputArgs[0];
+const cwd = remote.process.cwd();
+const inputArgs = remote.process.argv;
+let inputPath = inputArgs.pop();
 
-function parseInput( inputPath, cwd = remote.process.cwd() )
+function parseInput( inputPath = "", dir = cwd )
 {
-	let files = [];
-	let index = 1;
-	let inputFile = "";
-	let dirname = inputPath;
-
 	if( ! path.isAbsolute(inputPath) ) {
-		inputPath = path.resolve(cwd, inputPath);
+		inputPath = path.resolve(dir, inputPath);
 	}
+
+	let files = [];
+	let index = 0;
+	let inputFile = "";
+	let inputDir = inputPath;
 
 	if( sander.existsSync(inputPath) )
 	{
@@ -35,9 +36,7 @@ function parseInput( inputPath, cwd = remote.process.cwd() )
 
 		files = sander.readdirSync(inputDir)
 			.filter(isDisplayableImage)
-			.map(function(fileName){
-				return path.join(inputDir, fileName);
-			});
+			.map(fileName => path.join(inputDir, fileName));
 
 		if( inputFile ) {
 			index = files.indexOf(path.join(inputDir, inputFile));
@@ -64,14 +63,17 @@ function isDisplayableImage ( inputPath )
 	return ext && displayableExtensions.indexOf(ext) > -1;
 }
 
-const templateString = sander.readFileSync("template.html", {encoding: "utf-8"});
+const templateString = sander.readFileSync(
+	path.join(__dirname, "template.html"),
+	{ encoding: "utf-8" }
+);
 
 const app = new Ractive({
 	el: "#viewer",
 	template: templateString,
 
 	events: {
-		tap: ractiveEventsTap,
+		tap: ractiveEventsTap
 	},
 
 	data: function() {
@@ -126,12 +128,14 @@ const app = new Ractive({
 			}
 		});
 
-		Mousetrap.bind(["f", "f"], () => this.toggleFullscreen());
-		Mousetrap.bind(["escape"], () => this.fire("escape"));
 		Mousetrap.bind(["left"], () => this.fire("previousImage"));
 		Mousetrap.bind(["right"], () => this.fire("nextImage"));
+		Mousetrap.bind(["escape"], () => this.fire("escape"));
+		Mousetrap.bind(["f"], () => this.toggleFullscreen());
 
-		Hamster(document).wheel((...args) => this.handleMouseWheel(...args));
+		Hamster(document).wheel(
+			(...args) => this.handleMouseWheel(...args)
+		);
 		
 		this.fire("input", inputPath);
 	},
@@ -164,8 +168,6 @@ const app = new Ractive({
 		return i > 0;
 	}
 });
-
-$body = document.querySelector("body");
 
 ipcRenderer.on("maximize", function(){
 	app.set("maximized", true);
