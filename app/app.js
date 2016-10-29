@@ -169,10 +169,35 @@ const app = new Ractive({
   }
 });
 
-ipcRenderer.on("maximize", function(){
+
+/* Handle messages from BrowserWindow processes */
+ipcRenderer.on("maximize", () => {
   app.set("maximized", true);
 });
 
-ipcRenderer.on("unmaximize", function(){
+ipcRenderer.on("unmaximize", () => {
   app.set("maximized", false);
 });
+
+
+/* Drag&drop to open a file/folder */
+document.ondragover = document.ondrop = (e) => {
+  e.preventDefault();
+}
+
+document.ondragover = (e) => {
+  app.set("dragover", true);
+  e.preventDefault();
+}
+
+document.ondragleave = document.ondragexit = document.ondragend = (e) => {
+  app.set("dragover", false);
+  e.preventDefault();
+}
+
+document.body.ondrop = (e) => {
+  app.set("dragover", false);
+  const inputPath = e.dataTransfer.files[0].path;
+  app.fire("input", inputPath);
+  e.preventDefault();
+}

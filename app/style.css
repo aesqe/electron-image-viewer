@@ -7,8 +7,29 @@ html, body {
   pointer-events: none;
 }
 
+.window {
+  background-color: #fff;
+  transition: background-color 0.1s;
+}
+
 .maximized {
   background-color: #000;
+}
+
+.window::after {
+  content: "";
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  background-color: transparent;
+  transition: background-color 0.25s;
+}
+
+.dragover::after {
+  z-index: 10;
+  background-color: rgba(211, 211, 211, 0.85);
 }
 
 #display {
@@ -34,9 +55,27 @@ header {
 
 .maximized header {
   display: none;
+  -webkit-drag: none;
 }
 
-#currentOfDisplay {
+#current-of-display {
   min-width: 100px;
   box-shadow: none;
+}
+
+#drag-drop {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  width: 100%;
+}
+
+#drag-drop p {
+  width: 100%;
+  color: darkgray;
+  transition: color 0.25s;
+}
+
+.dragover #drag-drop p {
+  color: black;
 }

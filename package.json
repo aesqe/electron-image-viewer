@@ -7,7 +7,8 @@
   "author": "aesqe",
   "license": "ISC",
   "scripts": {
-    "buildwin64": "node buildwin64.js"
+    "buildwin64": "node buildwin64.js",
+    "buildall": "node buildall.js"
   },
   "dependencies": {
     "hamsterjs": "1.1.2",

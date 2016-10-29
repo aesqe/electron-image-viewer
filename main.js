@@ -53,4 +53,3 @@ app.on("ready", function() {
     mainWindow.openDevTools();
   }
 });
-
