@@ -12,6 +12,7 @@ const options = {
     "\.gitignore",
     ".gitignore",
     "buildall.js",
+    "buildosx.js",
     "buildwin64.js"
   ]
 };

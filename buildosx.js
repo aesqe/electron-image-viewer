@@ -4,15 +4,8 @@ const options = {
   dir: ".",
   out: "build",
   overwrite: true,
-  platform: [
-    "win32",
-    "darwin",
-    "linux"
-  ],
-  arch: [
-    "ia32",
-    "x64"
-  ],
+  platform: "darwin",
+  arch: "x64",
   ignore: [
     "\.DEV",
     ".DEV",
@@ -26,6 +19,6 @@ const options = {
 
 packager(options, function (err, appPaths) {
   if( err !== null ) {
-    console.log(err, appPaths);
+    console.log(err, appPaths)
   }
 });

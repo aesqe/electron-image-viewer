@@ -8,6 +8,7 @@
   "license": "ISC",
   "scripts": {
     "buildwin64": "node buildwin64.js",
+    "buildosx": "node buildosx.js",
     "buildall": "node buildall.js"
   },
   "dependencies": {
