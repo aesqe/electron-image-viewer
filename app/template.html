@@ -1,4 +1,9 @@
-<div class="window {{maximized ? 'maximized' : ''}} {{dragover ? 'dragover' : ''}}">
+<div
+  class="window"
+  class-maximized="{{maximized}}"
+  class-dragover="{{dragover}}"
+  class-color-picker-visible="{{colorPickerVisible}}"
+  style="background-color: {{backgroundColor}}">
 
   {{#if files.length}}
   <header class="toolbar toolbar-header text-center">
@@ -24,6 +29,10 @@
         <p class="text-center">Drag and drop a file or folder onto this window to start</p>
       </div>
     {{/if}}
+  </div>
+
+  <div class="color-picker" style="background-color: {{backgroundColor}}">
+    <input type="color" value="{{backgroundColor}}" />
   </div>
 
 </div>

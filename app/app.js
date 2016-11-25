@@ -29,6 +29,8 @@ const app = new Ractive({
 
   data: function() {
     return {
+      backgroundColor: "#f8f8f8",
+      colorPickerVisible: "",
       currentIndex: 0,
       files: []
     };
@@ -71,7 +73,10 @@ const app = new Ractive({
       },
 
       escape: function(){
-        if( this.get("maximized") ) {
+        if( this.get("colorPickerVisible") ) {
+          this.toggle("colorPickerVisible");
+        }
+        else if( this.get("maximized") ) {
           ipcRenderer.send("unmaximize");
         } else {
           ipcRenderer.send("quit");
@@ -83,6 +88,10 @@ const app = new Ractive({
     Mousetrap.bind(["right"], () => this.fire("nextImage"));
     Mousetrap.bind(["escape"], () => this.fire("escape"));
     Mousetrap.bind(["f"], () => this.toggleFullscreen());
+    Mousetrap.bind(["c"], () => this.toggle("colorPickerVisible"));
+    Mousetrap.bind(["b"], () => this.set("backgroundColor", "#000000"));
+    Mousetrap.bind(["w"], () => this.set("backgroundColor", "#ffffff"));
+    Mousetrap.bind(["g"], () => this.set("backgroundColor", "#888888"));
 
     Hamster(document).wheel(
       (...args) => this.handleMouseWheel(...args)
@@ -148,9 +157,9 @@ const app = new Ractive({
 
   handleMouseWheel: function(e, d, dx, dy){
     if( dy === 1 ) {
-      this.fire("nextImage");
-    } else {
       this.fire("previousImage");
+    } else {
+      this.fire("nextImage");
     }
   },
 

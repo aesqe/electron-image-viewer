@@ -9,7 +9,8 @@ html, body {
 
 .window {
   background-color: #fff;
-  transition: background-color 0.1s;
+  transition: background-color 0.2s;
+  box-shadow: inset 0 0 2px rgba(125, 74, 74, 0.22)
 }
 
 .maximized {
@@ -78,4 +79,29 @@ header {
 
 .dragover #drag-drop p {
   color: black;
+}
+
+.color-picker {
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: -1;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.color-picker-visible .color-picker {
+  z-index: 3;
+  opacity: 1;
+}
+
+.color-picker input {
+  width: 100px;
+  height: 100px;
+  position: absolute;
+  left: calc(50% - 50px);
+  top: calc(50% - 50px);
+  padding: 3px 5px;
 }
