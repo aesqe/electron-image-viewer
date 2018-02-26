@@ -105,3 +105,8 @@ header {
   top: calc(50% - 50px);
   padding: 3px 5px;
 }
+
+.filename {
+  color: #00FF00;
+  padding: 2px 5px;
+}

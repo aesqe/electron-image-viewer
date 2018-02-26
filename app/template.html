@@ -1,32 +1,53 @@
 <div
   class="window"
-  class-maximized="{{maximized}}"
-  class-dragover="{{dragover}}"
-  class-color-picker-visible="{{colorPickerVisible}}"
+  class-maximized="maximized"
+  class-dragover="dragover"
+  class-color-picker-visible="colorPickerVisible"
   style="background-color: {{backgroundColor}}">
 
   {{#if files.length}}
-  <header class="toolbar toolbar-header text-center">
-    <div class="toolbar-actions">
-      <div class="btn-group">
-        <button class="btn btn-default" on-tap="previousImage" disabled="{{previousButtonHidden}}">
-          <span class="icon icon-left-dir"></span>
-        </button>
-        <span id="current-of-display" class="btn">{{currentIndex+1}} of {{files.length}}</span>
-        <button class="btn btn-default" on-tap="nextImage" disabled="{{nextButtonHidden}}">
-          <span class="icon icon-right-dir"></span>
-        </button>
+    <header class="toolbar toolbar-header text-center">
+      <div class="toolbar-actions">
+        <div class="btn-group">
+          <button
+            class="btn btn-default"
+            on-tap="previousImage"
+            disabled="{{previousButtonHidden}}"
+          >
+            <span class="icon icon-left-dir"></span>
+          </button>
+          <span id="current-of-display" class="btn">
+            {{currentIndex+1}} of {{files.length}}
+          </span>
+          <button
+            class="btn btn-default"
+            on-tap="nextImage"
+            disabled="{{nextButtonHidden}}"
+          >
+            <span class="icon icon-right-dir"></span>
+          </button>
+        </div>
       </div>
-    </div>
-  </header>
+    </header>
   {{/if}}
 
   <div class="window-content">
     {{#if files.length}}
-      <div id="display" style="background-image: url({{currentImage}});"></div>
+      <div
+        id="display"
+        style="background-image: url({{currentImage}});"
+      >
+        {{#if displayFileName}}
+          <div class="filename">
+            {{currentImage}}
+          </div>
+        {{/if}}
+      </div>
     {{else}}
       <div id="drag-drop">
-        <p class="text-center">Drag and drop a file or folder onto this window to start</p>
+        <p class="text-center">
+          Drag and drop a file or folder onto this window to start
+        </p>
       </div>
     {{/if}}
   </div>

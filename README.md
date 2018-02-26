@@ -1,6 +1,6 @@
 # Electron image viewer
 
-A quick and dirty image viewer made in 6 hours over 4 days.
+A quick and dirty image viewer made in 8 hours over 5 days.
 
 Uses [Electron](https://github.com/electron/electron) + [Ractive](https://github.com/ractivejs/ractive) + [Photon](https://github.com/connors/photon/).
 
@@ -9,6 +9,10 @@ Supports only those image formats supported by Chromium: JPG, PNG, GIF, BPM, WEB
 **Shortcuts**:
 * left and right arrow for previous/next image
 * "f" to toggle fullscreen
+* "n" to toggle filename display
+* "c" to toggle background color colorpicker
 * esc to exit fullscreen or quit the application
 
 ![A screen shot](https://cloud.githubusercontent.com/assets/291348/19836170/9d499500-9e98-11e6-9252-7d68b27d5e2d.PNG)
+
+The font used for the app icon is [SF Alien Encounters by ShyFoundry](http://shyfoundry.com/fonts/shareware/sfalienenc.html).

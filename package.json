@@ -1,25 +1,51 @@
 {
   "name": "electron-image-viewer",
   "productName": "electron-image-viewer",
-  "version": "0.2.4",
+  "version": "0.3.0",
   "description": "Image viewer",
   "main": "main.js",
   "author": "aesqe",
   "license": "ISC",
   "scripts": {
-    "buildwin64": "node buildwin64.js",
-    "buildosx": "node buildosx.js",
-    "buildall": "node buildall.js"
+    "genver": "genversion app/js/lib/version.js",
+    "start": "cross-env NODE_ENV=production electron .",
+    "dev": "npm run genver && cross-env NODE_ENV=development electron .",
+    "pack": "npm run genver && electron-builder --dir",
+    "dist": "npm run genver && electron-builder",
+    "postinstall": "electron-builder install-app-deps"
   },
   "dependencies": {
+    "electron-store": "1.3.0",
+    "fs-jetpack": "1.3.0",
     "hamsterjs": "1.1.2",
     "mousetrap": "1.6.0",
-    "ractive": "^0.8.1",
+    "ractive": "^0.9.13",
     "ractive-events-tap": "0.3.1",
-    "sander": "0.5.1"
+    "trash": "4.2.1"
   },
   "devDependencies": {
-    "electron": "latest",
-    "electron-packager": "latest"
+    "cross-env": "5.1.3",
+    "electron": "1.8.2",
+    "electron-builder": "20.2.0",
+    "electron-packager": "11.0.1",
+    "genversion": "2.0.1"
+  },
+  "build": {
+    "appId": "electronImageViewer",
+    "directories": {
+      "output": "dist"
+    },
+    "mac": {
+      "target": [
+        "zip"
+      ],
+      "category": "public.app-category.utilities"
+    },
+    "win": {
+      "target": [
+        "nsis",
+        "zip"
+      ]
+    }
   }
 }
