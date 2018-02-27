@@ -12,7 +12,10 @@ Supports only those image formats supported by Chromium: JPG, PNG, GIF, BPM, WEB
 * "n" to toggle filename display
 * "c" to toggle background color colorpicker
 * esc to exit fullscreen or quit the application
+* del or command+backspace to trash current image, hold shift for permanent deletion
 
 ![A screen shot](https://cloud.githubusercontent.com/assets/291348/19836170/9d499500-9e98-11e6-9252-7d68b27d5e2d.PNG)
+
+A Turkish cat sleeping on a pile of books picture source: http://cuteoverload.com/2013/06/23/turkey-cat/
 
 The font used for the app icon is [SF Alien Encounters by ShyFoundry](http://shyfoundry.com/fonts/shareware/sfalienenc.html).
