@@ -9,6 +9,10 @@
     <header class="toolbar toolbar-header text-center">
       <div class="toolbar-actions">
         <div class="btn-group">
+          <div
+            class="preload"
+            style="background-image: url({{previousImage}});"
+          ></div>
           <button
             class="btn btn-default"
             on-tap="previousImage"
@@ -26,6 +30,10 @@
           >
             <span class="icon icon-right-dir"></span>
           </button>
+          <div
+            class="preload"
+            style="background-image: url({{nextImage}});"
+          ></div>
         </div>
       </div>
     </header>

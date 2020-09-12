@@ -47,6 +47,21 @@ html, body {
   margin-top: 0;
 }
 
+.preload {
+  float: left;
+  vertical-align: middle;
+
+  width: 24px;
+  height: 24px;
+
+  margin-left: 2em;
+  margin-right: 2em;
+
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+}
+
 header {
   position: fixed;
   z-index: 2;

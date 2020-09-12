@@ -46,6 +46,20 @@ const app = new Ractive({
       return files[currentIndex] || "";
     },
 
+    previousImage() {
+      const files = this.get("files");
+      const preloadIndex = this.get("currentIndex") - 1;
+
+      return this.hasPreviousImage() ? (files[preloadIndex] || "") : "";
+    },
+
+    nextImage() {
+      const files = this.get("files");
+      const preloadIndex = this.get("currentIndex") + 1;
+
+      return this.hasNextImage() ? (files[preloadIndex] || "") : "";
+    },
+
     previousButtonHidden() {
       return !this.hasPreviousImage() ? "hidden" : "";
     },
