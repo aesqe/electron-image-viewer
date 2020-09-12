@@ -46,11 +46,11 @@ const app = new Ractive({
       return files[currentIndex] || "";
     },
 
-    previousButtonHidden(){
+    previousButtonHidden() {
       return !this.hasPreviousImage() ? "hidden" : "";
     },
 
-    nextButtonHidden(){
+    nextButtonHidden() {
       return !this.hasNextImage() ? "hidden" : "";
     }
   },
@@ -115,7 +115,7 @@ const app = new Ractive({
     Mousetrap.bind(["shift+del", "shift+command+backspace"], this.deleteFile);
 
     Hamster(document).wheel(this.handleMouseWheel);
-    
+
     this.fire("input", inputPath);
   },
 
@@ -126,7 +126,7 @@ const app = new Ractive({
     } = store.get();
 
     if (backgroundColor) {
-      this.set({ backgroundColor} );
+      this.set({ backgroundColor });
     }
 
     if (typeof displayFileName === "boolean") {
@@ -137,7 +137,7 @@ const app = new Ractive({
   calculateNextIndex(currentIndex) {
     const files = this.get("files");
     const len = files.length;
-    const isLastImage = (currentIndex === len-1);
+    const isLastImage = (currentIndex === len - 1);
     const isFirstImage = (currentIndex === 0);
 
     let nextIndex = currentIndex;
@@ -207,7 +207,7 @@ const app = new Ractive({
         inputFile = path.basename(inputPath);
         inputDir = path.dirname(inputPath);
       }
-      
+
       if (this.isDirectory(inputDir)) {
         files = jetpack.list(inputDir)
           .filter(this.isDisplayableImage)
@@ -242,7 +242,7 @@ const app = new Ractive({
     return str.replace(/\s/g, "%20");
   },
 
-  handleMouseWheel(e, d, dx, dy){
+  handleMouseWheel(e, d, dx, dy) {
     const cmd = (dy === 1) ? "previousImage" : "nextImage";
 
     this.fire(cmd);
