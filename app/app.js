@@ -226,7 +226,7 @@ const app = new Ractive({
   },
 
   isDisplayableImage(inputPath) {
-    const ext = path.extname(inputPath).slice(1);
+    const ext = path.extname(inputPath).slice(1).toLowerCase();
     return ext && displayableExtensions.indexOf(ext) > -1;
   },
 
