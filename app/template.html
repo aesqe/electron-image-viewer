@@ -34,6 +34,15 @@
   <div class="window-content">
     {{#if files.length}}
       <div
+        class="preload"
+        style="background-image: url({{previousImage}});"
+      ></div> 
+      <div
+        class="preload"
+        style="background-image: url({{nextImage}});"
+      ></div>
+      
+      <div
         id="display"
         style="background-image: url({{currentImage}});"
       >
