@@ -48,18 +48,11 @@ html, body {
 }
 
 .preload {
-  float: left;
-  vertical-align: middle;
-
-  width: 24px;
-  height: 24px;
-
-  margin-left: 2em;
-  margin-right: 2em;
-
-  background-repeat: no-repeat;
-  background-size: cover;
-  background-position: center;
+  position: fixed;
+  z-index: -100;
+  opacity: .01;
+  width: 1px;
+  height: 1px;
 }
 
 header {
