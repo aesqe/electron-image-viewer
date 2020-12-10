@@ -253,7 +253,7 @@ const app = new Ractive({
   },
 
   encodeChars(str) {
-    return str.replace(/\s/g, "%20");
+    return str.replace(/['()# ]/g, c => ('%' + c.charCodeAt(0).toString(16)));
   },
 
   handleMouseWheel(e, d, dx, dy) {
